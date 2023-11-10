@@ -1,2 +1,12 @@
 # SAR-based-VIs-AutoML
 Supplementary material for the article "Estimating optical vegetation indices with Sentinel-1 SAR data and AutoML"
+
+The methodology in this work was divided into two main parts, into 1) Data preparation and preprocessing, and 2) Selection of input data and forest parameter estimation with ML. In the first step, forest masks of coniferous and broad-leaved forests, as well as for forest loss areas were created for Czechia using four different forest and land cover databases. Random points (with a 20 m buffer) were generated for each class and validated using high-resolution aerial photos in Google Earth Pro. After the validation, 600 areas were selected for each class. After accessing the entire S1 and S2 image collections in GEE over Czechia in 2021, a pre-processing was applied to each image separately and a paired S1-S2 image collection was created based on their temporal and spatial overlay. Moreover, other ancillary data was generated using DEM and weather databases and added to each S1-S2 image pair as ancillary image features. At the end, a feature extraction was performed on each S1-S2 image pair for each area and the data was exported from GEE. The data collection and preparation workflow can be seen in Figure 1.
+
+
+Fig. 1. Data pre-processing and preparation workflow in GEE.
+
+In the second step, data preprocessing and a subsequent data exploration analysis was performed on the exported dataset from GEE using pairwise correlation between the input features and permutation analysis using RFR. The importance of variance in data by including disturbed forest areas was further explored using the RFR performance on case studies and RFR feature importance analysis. After that, the RFR was used to explore the importance of speckle filtering, as well as radiometric terrain correction. The RFR and the auto-sklearn AutoML library were tested to estimate optical VIs using SAR and ancillary data. Different combinations of input features were also tested. Auto-sklearn was tested for different lengths of an ML pipeline optimization (runs). The accuracy of results was validated using mean absolute error (MAE) and root mean square error (RMSE) and R2 and a time series analysis, as well as spatial comparison was performed comparing the original S2 and the SAR-based VIs. All these steps are described in detail in the following sections.
+
+
+Figure 2. Data analysis workflow.
