@@ -1,43 +1,31 @@
-var countries = ee.FeatureCollection("USDOS/LSIB/2017"),
-    coniferous = ee.FeatureCollection("users/danielp/philab/coniferous_FINAL"),
-    deciduous = ee.FeatureCollection("users/danielp/philab/deciduous_FINAL"),
-    loss = ee.FeatureCollection("users/danielp/philab/loss_FINAL"),
-    loss2021 = ee.FeatureCollection("users/danielp/philab/loss2021");
-
 // set start and end date
 var startDate = '2021-01-01',
     endDate =   '2022-01-01';
 
-// Map.addLayer(coniferous)
-var ROI = loss2021.limit(600);
+// import data 
+var countries = ee.FeatureCollection("USDOS/LSIB/2017"),
+    coniferous = ee.FeatureCollection("users/danielp/philab/coniferous_FINAL"),
+    deciduous = ee.FeatureCollection("users/danielp/philab/deciduous_FINAL"),
+    loss2021 = ee.FeatureCollection("users/danielp/philab/loss2021");
 
-// // Map.addLayer(forests)
-// var numberOfRandomPoints = 5000; //25000 in 42 seed to have 1020 points in deciduous, 5000 in seed 42 for 1025 points in conifers
+// Assing ROI 
+var ROI = loss2021.limit(600);
 
 // select Czechia
 var Czechia = countries.filter(ee.Filter.eq('COUNTRY_NA','Czechia'));
 var broadGeometry = Czechia; // geometry to generate random points
 
-var forestType = 111; // for Copernicus Global Land Cover Layers
-// 111 conifers, 114 deciduous
-
-var CORINEtype = 312; // for CORINE Land cover
-// 312 conifers, 311 deciduous
-
 // set the maximum threshold for single image cloud coverage
 var max_clouds = 30;
 
+// Select indices and featues
 var listOfOpticalVIs = ['NDVI','NDVIrededge','FAPAR','LAI', 'FAPAR_3b','LAI_3b', 'EVI','NDMI'];
-var listOfSARfeatures = ['VV','VH','VV/VH','VH/VV','RVI', 'VDDPI', 'RFDI', 'NRPB', 'angle','LIA',
-                        'DPSVInormalized', 'DPSVImodified', 'DPSVIoriginal'
-                        ];
-var listOfFinalFeatures = ['NDVI','NDVIrededge','FAPAR','LAI', 'FAPAR_3b','LAI_3b', 'EVI','NDMI', 
-                          'VV','VH','VV/VH','VH/VV','RVI', 'VDDPI', 'RFDI', 'NRPB', 'angle','LIA',
-                          'DPSVInormalized', 'DPSVImodified', 'DPSVIoriginal',
-                          'precipitationCurrent', 'precipitation12hours', 'temperature'
-                        ];
 
-// add ancillary data
+// ========================================================================================
+// ================================ Load satellite data  ==================================
+// ========================================================================================
+
+// Load ancillary data
 var CoprenicusDEM = ee.ImageCollection("COPERNICUS/DEM/GLO30").select('DEM').filterBounds(Czechia),
     gfc = ee.Image("UMD/hansen/global_forest_change_2022_v1_10"),
     ESAWC = ee.ImageCollection("ESA/WorldCover/v200").first(),
@@ -58,72 +46,26 @@ var S2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
           .filterDate(startDate, endDate)
           .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',max_clouds))
           // .select(['B2','B3','B4','B5','B6','B7','B8','B11','B12','B8A', 'SCL']);
-// print('Original S-2 collection', S2.size());
+print('Original S-2 collection', S2.size());
 
 
 // Add Sentinel-1 data
 var S1Collection = ee.ImageCollection('COPERNICUS/S1_GRD_FLOAT')
                   .filterBounds(ROI.geometry())
                   .filterDate(startDate, endDate)
+print('Original S-1 collection', S1Collection.size());
 
-// Function to add optical vegetation indices (VI)
-var addOpticalVI = function(img) {
-  var EVI = img.expression(
-        '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
-            'NIR': img.select('B8').divide(10000),
-            'RED': img.select('B4').divide(10000),
-            'BLUE': img.select('B2').divide(10000)
-        }).rename("EVI")
-  
-  return img
-    .addBands([
-                img.normalizedDifference(['B8', 'B4']).rename('NDVI'), 
-                img.normalizedDifference(['B8', 'B5']).rename('NDVIrededge'),
-                img.normalizedDifference(['B3', 'B8']).rename('NDWI'),
-                img.normalizedDifference(['B8', 'B11']).rename('NDMI'),
-                EVI
-                ]
-              );
-};
 
-// ================= FAPAR and LAI ================= //
-{ 
-  /*--------------------------------------------------------------------------------------------------------
-This script aims to show Sentinel-2 biophysical parameter retrievals through GEE, based on the 
-S2ToolBox methodology.
-For algorithm details, see the original ATBD: https://step.esa.int/docs/extra/ATBD_S2ToolBox_L2B_V1.1.pdf
+// ========================================================================================
+// =========================== SAR polarimtric indices  ===================================
+// ========================================================================================
 
-Currently, only FAPAR and LAI (both 3-band and 8-band versions) have been implemented. fCOVER, CCC and CWC can 
-be done as well. Input should always be Sentinel-2 L2A products. 
-
-There has been --no-- thorough validation of this code.
-Please use at your own risk and provide feedback to:
-
-kristofvantricht@gmail.com
---------------------------------------------------------------------------------------------------------
-*/
-
-// Import the biopar module
-var biopar = require('users/kristofvantricht/s2_biopar:biopar');
-
-function addFAPARandLAI (img) {
-  var FAPAR = biopar.get_fapar(img).rename('FAPAR');
-  var LAI = biopar.get_lai(img).rename('LAI');
-  var FAPAR_3b = biopar.get_fapar3band(img).rename('FAPAR_3b');
-  var LAI_3b = biopar.get_lai3band(img).rename('LAI_3b');
-  
-  return img.addBands([FAPAR ,LAI,LAI_3b,FAPAR_3b])
-}
-
-}
-
-// change linear units to dB
+// Function to change linear units to dB
 function powerToDb (img){
   return ee.Image(10).multiply(img.log10()).copyProperties(img,img.propertyNames());
 }
 
-
-// Function to add radar indices
+// Function to add radar polarimetric indices
 var addSARIndices = function(img) {
   var VV = ee.Image(10.0).pow(img.select('VV').divide(10.0)),
       VH = ee.Image(10.0).pow(img.select('VH').divide(10.0));
@@ -174,7 +116,68 @@ var addSARIndices = function(img) {
                        ]);
 };
 
-//////////////////////////////// S2CLOUDLESS ////////////////////////////////
+
+// ========================================================================================
+// =========================== Optical vegetation indices  ================================
+// ========================================================================================
+
+// Function to add optical vegetation indices (VI)
+var addOpticalVI = function(img) {
+  var EVI = img.expression(
+        '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+            'NIR': img.select('B8').divide(10000),
+            'RED': img.select('B4').divide(10000),
+            'BLUE': img.select('B2').divide(10000)
+        }).rename("EVI")
+  
+  return img
+    .addBands([
+                img.normalizedDifference(['B8', 'B4']).rename('NDVI'), 
+                img.normalizedDifference(['B8', 'B5']).rename('NDVIrededge'),
+                img.normalizedDifference(['B3', 'B8']).rename('NDWI'),
+                img.normalizedDifference(['B8', 'B11']).rename('NDMI'),
+                EVI
+                ]
+              );
+};
+
+// ================= FAPAR and LAI ================= //
+{ 
+  /*--------------------------------------------------------------------------------------------------------
+This script aims to show Sentinel-2 biophysical parameter retrievals through GEE, based on the 
+S2ToolBox methodology.
+For algorithm details, see the original ATBD: https://step.esa.int/docs/extra/ATBD_S2ToolBox_L2B_V1.1.pdf
+
+Currently, only FAPAR and LAI (both 3-band and 8-band versions) have been implemented. fCOVER, CCC and CWC can 
+be done as well. Input should always be Sentinel-2 L2A products. 
+
+There has been --no-- thorough validation of this code.
+Please use at your own risk and provide feedback to:
+
+kristofvantricht@gmail.com
+
+Available at GitHub: https://github.com/kvantricht/gee-biopar
+and Zenodo: https://zenodo.org/records/10103929
+--------------------------------------------------------------------------------------------------------
+*/
+
+// Import the biopar module
+var biopar = require('users/kristofvantricht/s2_biopar:biopar');
+
+function addFAPARandLAI (img) {
+  var FAPAR = biopar.get_fapar(img).rename('FAPAR');
+  var LAI = biopar.get_lai(img).rename('LAI');
+  var FAPAR_3b = biopar.get_fapar3band(img).rename('FAPAR_3b');
+  var LAI_3b = biopar.get_lai3band(img).rename('LAI_3b');
+  
+  return img.addBands([FAPAR ,LAI,LAI_3b,FAPAR_3b])
+}
+
+}
+
+// ========================================================================================
+// ================= Mask out clouds, shadows and snow in S2 images  ======================
+// ========================================================================================
 {
 //Predefined parameters
 var CLOUD_FILTER = max_clouds; //filter out images having higher cloudiness than set
@@ -192,6 +195,8 @@ var s2_cloudless_col = ee.ImageCollection('COPERNICUS/S2_CLOUD_PROBABILITY')
 var filtered = S2.filterDate(startDate, endDate)
               .filterBounds(ROI.geometry())
               .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',CLOUD_FILTER));
+
+
 
 //Join the collections 
 var joinedColl = ee.ImageCollection(ee.Join.saveFirst('s2cloudless').apply
@@ -265,11 +270,12 @@ function add_cld_shdw_mask(img){
 }
 }
 
-
+// apply the cloud masks on the entire S2 image collection
 var S2_cloudMasked = joinedColl.map(add_cld_shdw_mask);
 
 var original = ee.Image(filtered.toList(filtered.size()).get(20));
 
+// The combination of multiple cloud and snow masks
 function S2fullMask (img) {
   var withSnowMask = img.updateMask(img.select('MSK_SNWPRB').gt(5).eq(0))
                               .updateMask(img.select('SCL').eq(11).eq(0));
@@ -305,7 +311,7 @@ var S2 = S2_cloudMasked
                       .map(addOpticalVI)
                       .map(addFAPARandLAI)
                       .select(listOfOpticalVIs)
-print(S2, 'S2')
+// print(S2, 'S2')
 
 // ========================================================================================
 // =========================== Add weather information  ===================================
@@ -346,7 +352,9 @@ var addweatherData = function (img) {
   temperature.clip(img.geometry()), precipitationCurrent.clip(img.geometry())]);
 };
 
-// Map.addLayer(ee.Image('COPERNICUS/S1_GRD_FLOAT/S1A_IW_GRDH_1SDV_20211009T164335_20211009T164400_040045_04BD96_B962'),{},'s1')
+// ========================================================================================
+// ================= Add weather and DEM information to each S1 image  ====================
+// ========================================================================================
 S1Collection = S1Collection
               // add DEM information
               .map(function (img){
@@ -355,7 +363,9 @@ S1Collection = S1Collection
               // add weather data
               .map(addweatherData);
 
-// =================================== JOIN THE COLLECTIONS ======================= //
+// ========================================================================================
+// ======================== Create the MMT-GEE dataset  ===================================
+// ========================================================================================
 
 function join_S1_S2 (image) {
   var s1_selected = image;
@@ -383,10 +393,10 @@ var joined_all = S1Collection.map(join_S1_S2);
 
 // Filter out lonely S1 images
 var joined = ee.ImageCollection(joined_all).filter(ee.Filter.gt('s2_size',0));
-print(joined, 'joined');
+// print(joined, 'joined');
 
 // ============================================================================
-// ======================= ADD LIA  ==================================
+// ======================= ADD LIA  ===========================================
 // ============================================================================
 
 // Add Local Incidence Angle (LIA) from Copernicus DEM
@@ -394,15 +404,15 @@ print(joined, 'joined');
 var addLIA = require('users/danielp/functions:addLIA');
 var joined = addLIA.addLIA(joined,Czechia);
 
+
 // ============================================================================
 // ======================= SPECKLE FILTERING ==================================
 // ============================================================================
-
 var KERNEL_SIZE = 5; // for 5x5 filter
 
 var leefilter = function(image) {
 //---------------------------------------------------------------------------//
-// Lee filter 
+// Lee filter in GEE, implementation based on Mullissa et al. 2021: https://doi.org/10.3390/rs13101954  
 //---------------------------------------------------------------------------//
 /** Lee Filter applied to one image. It is implemented as described in 
  J. S. Lee, “Digital image enhancement and noise filtering by use of local statistics,” 
@@ -441,87 +451,57 @@ var leefilter = function(image) {
         return image.addBands(output, null, true);
   }   
 
-// Do the job
+// Apply the lee filter
 var speckle_filtered_joined = joined.map(leefilter);
-
-// Boxcar filter
-function multilooking(img){
-  var multilooked = img.select(['VV','VH']).reduceNeighborhood({
-    reducer: ee.Reducer.mean(),
-    kernel: ee.Kernel.square(KERNEL_SIZE/2)
-    }).rename(['VV','VH']);
-    
-  return img.addBands(multilooked, null, true);
-}  
-
-// // Do the job for 
-// // uncomment for multilooking
-// var speckle_filtered_joined = joined.map(multilooking);
-
-// ============================================================================
-// ============================== LC-SLIAC ====================================
-// ============================================================================
-
-// call the LC-SLIAC_global function 
-var LC_SLIAC_global = require('users/danielp/phi-lab:final/LC-SLIAC_global_v2_oneLCtype_ESAworldCover');
-
-// Apply the LIA Correction function
-var CorrectedCollection = LC_SLIAC_global.LC_SLIAC_global(
-    Czechia.geometry(),
-    startDate,
-    endDate,
-    10, // Forests
-    speckle_filtered_joined
-);
-
 
 // change linear units to dB
 function powerToDb_Speckled (img){
   return img.addBands(ee.Image(10).multiply(img.select(['VV','VH']).log10()).rename(['VV','VH']),null,true)
 }
 
-var corrected_joined = speckle_filtered_joined.map(addSARIndices).map(powerToDb_Speckled)//.select(listOfFinalFeatures)
-print(corrected_joined)
+// Add SAR polarimetric indices and conver VV and VH to dB scale
+var corrected_joined = speckle_filtered_joined.map(addSARIndices).map(powerToDb_Speckled)
+// print(corrected_joined)
+
+// ============================================================================
+// ====================== Prepare and export data =============================
+// ============================================================================
 
 var getData = corrected_joined.map(function(img){
     return img.reduceRegions({collection: ROI, reducer: ee.Reducer.mean(), scale: 20});
   });
 
 var to_export = getData.flatten().filter(ee.Filter.notNull(['LAI','VH'])).filter(ee.Filter.neq('LAI',0)).filter(ee.Filter.neq('DEM',0));
-print(to_export)
+// print(to_export)
 
 // export
 Export.table.toDrive({
     collection: to_export,
-    description: 'Multiple_Locations_time_series',
-    folder: 'phi-lab-tests',
-    fileNamePrefix: 'Multiple_Locations_time_series',
+    description: 'MMT_GEE_data',
+    folder: 'MMT_GEE',
+    fileNamePrefix: 'MMT_GEE_data',
     fileFormat: 'CSV'
 });
 
 
+// ============================================================================
+// ====================== Prepare and export sample ===========================
+// ============================================================================
 
-
-
-
-
-
-// JUST ONE POINT FOR VALIDATION OF TS
+// JUST ONE POINT FOR VALIDATION OF TIME SERIES
 var deciduous_point = ee.Geometry.Point([14.172958485407266,49.9577622055273]);
-var evergreen_point = ee.Geometry.Point([14.826471541984496,49.79316469263443]);
-var evergreen_point2 = ee.Geometry.Point([14.457397037020527,50.44805205669623]);
+var evergreen_point = ee.Geometry.Point([14.457397037020527,50.44805205669623]);
 var loss1 = ee.Geometry.Point([15.111915087246668,49.824023512358444]);
-var loss2 = ee.Geometry.Point([15.41255025225252,49.422133147718384]);
-var fos = ee.Geometry.Point([17.81959806559152,49.34443248398086]); 
 var loss3 = ee.Geometry.Point([15.515598972689373,49.3507118017801]);
-// Map.addLayer(loss1_point)
 
 // Select which sample point to use
 var selected = loss1;
+Map.addLayer(selected)
 
+// add buffer
 var buffered_selected = selected.buffer(20).bounds();
 
-// get data for each point in each time step
+// get data for each point in each time step and apply all the functions
 var S1export_one_point = addLIA.addLIA(S1Collection,Czechia).map(leefilter).map(addSARIndices).map(powerToDb_Speckled)
                         .filterBounds(buffered_selected).map(function(img){
                         return img.reduceRegions({collection: buffered_selected, reducer: ee.Reducer.mean(), scale: 20})
@@ -531,7 +511,7 @@ var S1export_one_point = addLIA.addLIA(S1Collection,Czechia).map(leefilter).map(
 Export.table.toDrive({
     collection: S1export_one_point,
     description: 'S1_OnePoint_',
-    folder: 'phi-lab-tests',
+    folder: 'MMT_GEE',
     fileNamePrefix: 'S1_OnePoint_',
     fileFormat: 'CSV'
 });
@@ -541,13 +521,13 @@ var S2export_one_point = S2.filterBounds(buffered_selected).map(function(img){
     return img.reduceRegions({collection: buffered_selected, reducer: ee.Reducer.mean(), scale: 20})
   }).flatten().filter(ee.Filter.notNull(['LAI']));
 
-print(S2export_one_point)
+// print(S2export_one_point)
 
 // export just one test point
 Export.table.toDrive({
     collection: S2export_one_point,
     description: 'S2_OnePoint_',
-    folder: 'phi-lab-tests',
+    folder: 'MMT_GEE',
     fileNamePrefix: 'S2_OnePoint_',
     fileFormat: 'CSV'
 });
