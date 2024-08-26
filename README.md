@@ -1,5 +1,5 @@
-# SAR-based-VIs-AutoML
-Supplementary material for the article "Estimating optical vegetation indices with Sentinel-1 SAR data and AutoML"
+# SAR-based-VIs
+Supplementary material for the article "Estimating optical vegetation indices and biophysical variables for temperate forests with Sentinel-1 SAR data using machine learning techniques: A case study for Czechia"
 
 The methodology in this work was divided into two main parts, into 1) Data preparation and preprocessing, and 2) Selection of input data and forest parameter estimation with ML. In the first step, forest masks of coniferous and broad-leaved forests, as well as for forest loss areas were created for Czechia using four different forest and land cover databases. Random points (with a 20 m buffer) were generated for each class and validated using high-resolution aerial photos in Google Earth Pro. After the validation, 600 areas were selected for each class. After accessing the entire S1 and S2 image collections in GEE over Czechia in 2021, a pre-processing was applied to each image separately and a paired S1-S2 image collection was created based on their temporal and spatial overlay. Moreover, other ancillary data was generated using DEM and weather databases and added to each S1-S2 image pair as ancillary image features. At the end, a feature extraction was performed on each S1-S2 image pair for each area and the data was exported from GEE. The data collection and preparation workflow can be seen in Figure 1.
 
