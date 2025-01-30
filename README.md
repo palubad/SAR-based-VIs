@@ -6,10 +6,10 @@ The best-performing models were Random Forest Regressor (RFR) for LAI and FAPAR 
 This repository is part of the following paper: 
 > Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2025): Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning. Published in Big Earth Data
 
+## 💾 The best found ML models can be found on [HuggingFace🤗](https://huggingface.co/palubad/SAR-based-VIs).
+
 ![image/png](https://cdn-uploads.huggingface.co/production/uploads/6798c936ece6b7910c55d1e5/3rueSUVk9bOqsFy4fsD-7.png)
 Figure 1. Methodology used in the paper.
-
-## 💾 The best found ML models can be found on [HuggingFace🤗](https://huggingface.co/palubad/SAR-based-VIs).
 
 ## ⚙️ Details
 
