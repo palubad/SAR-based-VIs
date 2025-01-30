@@ -9,7 +9,7 @@ This repository is part of the following paper:
 ![image/png](https://cdn-uploads.huggingface.co/production/uploads/6798c936ece6b7910c55d1e5/3rueSUVk9bOqsFy4fsD-7.png)
 Figure 1. Methodology used in the paper.
 
-## The best found ML models can be found on [HuggingFace🤗](https://huggingface.co/palubad/SAR-based-VIs).
+## 💾 The best found ML models can be found on [HuggingFace🤗](https://huggingface.co/palubad/SAR-based-VIs).
 
 ## ⚙️ Details
 
