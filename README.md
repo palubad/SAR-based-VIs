@@ -40,6 +40,7 @@ A DEMO on how to apply the trained ML models is available in Google Colab [with 
 > Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2024): Identification of Optimal Sentinel-1 SAR Polarimetric Parameters for Forest Monitoring in Czechia. AUC Geographica 60(1), 46–60, DOI: [10.14712/23361980.2024.18](https://doi.org/10.14712/23361980.2024.18).
 
 **BibTeX:**
+```
 @article{Paluba24022025,
     author = {Daniel Paluba, Bertrand Le Saux, Francesco Sarti and Přemysl Štych},
     title = {Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning},
@@ -53,5 +54,5 @@ A DEMO on how to apply the trained ML models is available in Google Colab [with 
     URL = {https://doi.org/10.1080/20964471.2025.2459300},
     eprint = {https://doi.org/10.1080/20964471.2025.2459300}
 }
-
-- **Funded by:** Charles University Grant Agency – Grantová Agentura Univerzity Karlovy (GAUK) Grant No. 412722; the European Union’s Caroline Herschel Framework Partnership Agreement on Copernicus User Uptake under grant agreement No. FPA 275/G/GRO/COPE/17/10042, project FPCUP (Framework Partnership Agreement on Copernicus User Uptake) and the Spatial Data Analyst project (NPO_UK_MSMT-16602/2022) funded by the European Union – NextGenerationEU
+```
+**Funded by:** Charles University Grant Agency – Grantová Agentura Univerzity Karlovy (GAUK) Grant No. 412722; the European Union’s Caroline Herschel Framework Partnership Agreement on Copernicus User Uptake under grant agreement No. FPA 275/G/GRO/COPE/17/10042, project FPCUP (Framework Partnership Agreement on Copernicus User Uptake) and the Spatial Data Analyst project (NPO_UK_MSMT-16602/2022) funded by the European Union – NextGenerationEU
