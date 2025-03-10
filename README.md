@@ -7,7 +7,8 @@ This repository is part of the following paper:
 > Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2025): Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning. Published in Big Earth Data
 <br></br>
 
-## 💾 The best-performing ML models can be found on [Hugging Face 🤗](https://huggingface.co/palubad/SAR-based-VIs).
+## 💾 The best-performing ML models can be found on [Hugging Face 🤗]([https://huggingface.co/palubad/SAR-based-VIs](https://huggingface.co/palubad/SAR-based-VIs-models)).
+<br></br>
 ## ⚙️ A DEMO on how to apply the trained ML models in Google Colab [with data and model downloads]: [Try it out here](https://colab.research.google.com/drive/1z2uoZtrSv1PPtM6DZaFCN_TR5o8uEwaV?usp=sharing).
 
 <br></br>
@@ -29,7 +30,7 @@ Using ML, particularly RFR and XGB, the study demonstrates that SAR-based VIs ca
 
 
 ## Demo:
-  Will be provided soon.
+A DEMO on how to apply the trained ML models is available in Google Colab [with data and model downloads]: [Try it out here](https://colab.research.google.com/drive/1z2uoZtrSv1PPtM6DZaFCN_TR5o8uEwaV?usp=sharing)
 
 ## ⭐ Citation
 
