@@ -8,6 +8,8 @@ This repository is part of the following paper:
 <br></br>
 
 ## 💾 The best-performing ML models can be found on [Hugging Face 🤗](https://huggingface.co/palubad/SAR-based-VIs).
+## ⚙️ A DEMO on how to apply the trained ML models in Google Colab [with data and model downloads]: [Try it out here](https://colab.research.google.com/drive/1z2uoZtrSv1PPtM6DZaFCN_TR5o8uEwaV?usp=sharing).
+
 <br></br>
 ![image/png](https://cdn-uploads.huggingface.co/production/uploads/6798c936ece6b7910c55d1e5/3rueSUVk9bOqsFy4fsD-7.png)
 Figure 1. Methodology used in the paper.
