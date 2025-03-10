@@ -4,7 +4,7 @@ This study presents a machine learning-based approach to estimate optical vegeta
 The best-performing models were Random Forest Regressor (RFR) for LAI and FAPAR and XGBoost (XGB) for EVI and NDVI - these models are available in this repository. These models were trained on temporally and spatially aligned time series (TS) datasets, containing Sentinel-1 SAR data, Sentinel-2 multispectral data, DEM-based features and meteorological variables. It provides an accurate and timely alternative to optical-based VIs.
 
 This repository is part of the following paper: 
-> Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2025): Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning. Published in Big Earth Data
+> Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2025): Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning. Big Earth Data. Big Earth Data. DOI: [10.1080/20964471.2025.2459300](https://doi.org/10.1080/20964471.2025.2459300)
 <br></br>
 
 ## 💾 The best-performing ML models can be found on [Hugging Face 🤗](https://huggingface.co/palubad/SAR-based-VIs-models).
@@ -34,18 +34,39 @@ A DEMO on how to apply the trained ML models is available in Google Colab [with 
 
 ## ⭐ Citation
 
-> Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2025): Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning. Published in Big Earth Data
+> Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2025): Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning. Big Earth Data. DOI: [10.1080/20964471.2025.2459300](https://doi.org/10.1080/20964471.2025.2459300)
 <br></br>
 
-> Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2024): Identification of Optimal Sentinel-1 SAR Polarimetric Parameters for Forest Monitoring in Czechia. AUC Geographica 59(2), 1–15, DOI: [10.14712/23361980.2024.18](https://doi.org/10.14712/23361980.2024.18).
+> Paluba, D., Le Saux, B., Sarti, F., Štych, P. (2024): Identification of Optimal Sentinel-1 SAR Polarimetric Parameters for Forest Monitoring in Czechia. AUC Geographica 60(1), 46–60, DOI: [10.14712/23361980.2024.18](https://doi.org/10.14712/23361980.2024.18).
 
 **BibTeX:**
+@article{Paluba24022025,
+author = {Daniel Paluba, Bertrand Le Saux, Francesco Sarti and Přemysl Štych},
+title = {Estimating vegetation indices and biophysical parameters for Central European temperate forests with Sentinel-1 SAR data and machine learning},
+journal = {Big Earth Data},
+volume = {0},
+number = {0},
+pages = {1--32},
+year = {2025},
+publisher = {Taylor \& Francis},
+doi = {10.1080/20964471.2025.2459300},
 
-Will be added soon.
 
-**APA:**
+URL = { 
+    
+        https://doi.org/10.1080/20964471.2025.2459300
+    
+    
 
-Will be added soon.
+},
+eprint = { 
+    
+        https://doi.org/10.1080/20964471.2025.2459300
+    
+    
 
+}
+
+}
 
 - **Funded by:** Charles University Grant Agency – Grantová Agentura Univerzity Karlovy (GAUK) Grant No. 412722; the European Union’s Caroline Herschel Framework Partnership Agreement on Copernicus User Uptake under grant agreement No. FPA 275/G/GRO/COPE/17/10042, project FPCUP (Framework Partnership Agreement on Copernicus User Uptake) and the Spatial Data Analyst project (NPO_UK_MSMT-16602/2022) funded by the European Union – NextGenerationEU
