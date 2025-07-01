@@ -54,5 +54,10 @@ A DEMO on how to apply the trained ML models is available in Google Colab [with 
     URL = {https://doi.org/10.1080/20964471.2025.2459300},
     eprint = {https://doi.org/10.1080/20964471.2025.2459300}
 }
+
+# ESA Living Planet Symposium 2025 Poster
+![image/png](https://github.com/palubad/SAR-based-VIs/blob/main/ESA-LPS-2025-poster/ESA%20LPS%202025.png)
+Figure 1. The poster presented at the ESA LIving Planet Symposium 2025 in Vienna, Austria.
+
 ```
 **Funded by:** Charles University Grant Agency – Grantová Agentura Univerzity Karlovy (GAUK) Grant No. 412722; the European Union’s Caroline Herschel Framework Partnership Agreement on Copernicus User Uptake under grant agreement No. FPA 275/G/GRO/COPE/17/10042, project FPCUP (Framework Partnership Agreement on Copernicus User Uptake) and the Spatial Data Analyst project (NPO_UK_MSMT-16602/2022) funded by the European Union – NextGenerationEU
